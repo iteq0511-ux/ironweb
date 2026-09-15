@@ -1,0 +1,13 @@
+{
+  "name": "ironweb",
+  "version": "1.0.0",
+  "description": "IronWeb 个人博客网站 - 小说创作与视频收藏",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=16"
+  },
+  "license": "MIT"
+}
