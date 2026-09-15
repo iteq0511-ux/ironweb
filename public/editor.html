@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="IronWeb 小说编辑器">
+<title>编辑器 · IronWeb</title>
+<link rel="icon" href="favicon.svg">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="editor" id="editorBody">
+
+<header class="editor-topbar">
+  <button class="icon-btn" id="btnBack" title="返回小说列表"></button>
+  <button class="icon-btn" id="btnPanel" title="章节 / 人物 / 设置"></button>
+  <input class="editor-title-input" id="novelTitle" maxlength="200" placeholder="小说标题">
+  <span class="save-status" id="saveStatus">加载中…</span>
+  <div class="spacer"></div>
+  <button class="btn primary" id="btnImmersive"></button>
+</header>
+
+<main class="editor-main">
+  <!-- 左侧面板 -->
+  <aside class="side-panel">
+    <nav class="tabs">
+      <button class="tab active" data-tab="chapters"></button>
+      <button class="tab" data-tab="characters"></button>
+      <button class="tab" data-tab="settings"></button>
+    </nav>
+    <div class="tab-body">
+      <!-- 章节 -->
+      <div class="tab-pane active" id="pane-chapters">
+        <div class="chapter-list" id="chapterList"></div>
+        <button class="add-chapter" id="btnAddChapter"></button>
+      </div>
+      <!-- 人物关系 -->
+      <div class="tab-pane" id="pane-characters">
+        <label class="label" style="margin-top:2px">人物（点击可编辑）</label>
+        <div class="char-list" id="charList"></div>
+        <button class="add-chapter" id="btnAddChar"></button>
+        <label class="label">创建人物关系</label>
+        <div class="relation-form">
+          <select class="select" id="relFrom"></select>
+          <select class="select" id="relType"></select>
+          <select class="select" id="relTo"></select>
+          <button class="btn primary sm" id="btnAddRel" style="align-self:center">添加</button>
+        </div>
+        <input class="input" id="relCustom" placeholder="自定义关系类型（可选，如：上司/仇敌）" style="margin-top:8px">
+        <div class="rel-list" id="relList"></div>
+        <div class="graph-wrap" id="graphWrap" style="display:none">
+          <svg id="relGraph" viewBox="0 0 300 260"></svg>
+          <div class="graph-tip">人物关系图谱 · 点击人物可高亮</div>
+        </div>
+      </div>
+      <!-- 设置 -->
+      <div class="tab-pane" id="pane-settings">
+        <div class="set-row">
+          <span class="set-label">字号</span>
+          <input type="range" id="setFontSize" min="12" max="30" step="1">
+          <span class="set-val" id="setFontSizeVal">17</span>
+        </div>
+        <div class="set-row">
+          <span class="set-label">行距</span>
+          <input type="range" id="setLineHeight" min="1.3" max="2.8" step="0.05">
+          <span class="set-val" id="setLineHeightVal">1.9</span>
+        </div>
+        <div class="set-row">
+          <span class="set-label">字体</span>
+          <select class="select" id="setFontFamily" style="flex:1">
+            <option value="默认">默认</option>
+            <option value="宋体">宋体</option>
+            <option value="楷体">楷体</option>
+            <option value="黑体">黑体</option>
+            <option value="微软雅黑">微软雅黑</option>
+          </select>
+        </div>
+        <label class="label">字体颜色</label>
+        <div class="color-swatches" id="colorSwatches"></div>
+        <div class="set-row" style="margin-top:10px">
+          <span class="set-label">自定义</span>
+          <input type="color" class="color-input" id="setFontColor" value="#e8edf3">
+        </div>
+        <label class="label">编辑区主题</label>
+        <div class="seg" id="setThemeSeg">
+          <button data-theme="dark">深色</button>
+          <button data-theme="light">浅色</button>
+        </div>
+        <div class="set-note" id="saveNote">小说会在编辑时自动保存，点击「保存」也会立即保存。</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- 右侧写作区 -->
+  <section class="write-area">
+    <div class="write-head">
+      <input class="chapter-title-input" id="chapterTitle" maxlength="200" placeholder="本章标题">
+      <span class="write-chapter-words" id="chapterWords">0 字</span>
+    </div>
+    <div class="write-box">
+      <textarea class="editor-ta" id="ta" placeholder="开始写作…&#10;&#10;写作内容会自动保存，放心书写。"></textarea>
+    </div>
+  </section>
+</main>
+
+<footer class="editor-bottombar">
+  <span class="hint" id="bottomHint">自动保存已开启</span>
+  <button class="btn danger" id="btnExitImmersive" style="display:none"></button>
+  <button class="btn primary" id="btnSave"></button>
+  <button class="btn" id="btnRead"></button>
+</footer>
+
+<div class="panel-mask" id="panelMask"></div>
+
+<!-- 人物编辑弹窗 -->
+<div class="modal" id="charModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3 id="charModalTitle">编辑人物</h3>
+      <button class="icon-btn" data-close="charModal"></button>
+    </div>
+    <label class="label">姓名</label>
+    <input class="input" id="charName" maxlength="100">
+    <label class="label">简介 / 设定</label>
+    <textarea class="textarea" id="charDesc" maxlength="2000" placeholder="人物性格、身份、背景…"></textarea>
+    <label class="label">代表颜色</label>
+    <div class="color-swatches" id="charColors"></div>
+    <div class="modal-foot">
+      <button class="btn danger" id="btnDelChar" style="margin-right:auto">删除人物</button>
+      <button class="btn" data-close="charModal">取消</button>
+      <button class="btn primary" id="btnSaveChar">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- 阅读模式 -->
+<div class="reader" id="reader">
+  <div class="reader-head" id="readerTitle"></div>
+  <div class="reader-title-sub" id="readerSub"></div>
+  <div class="reader-body"><div class="reader-content" id="readerContent"></div></div>
+  <div class="reader-bar">
+    <button class="btn" id="readerPrev"></button>
+    <span class="reader-pos" id="readerPos"></span>
+    <button class="btn" id="readerNext"></button>
+    <button class="btn quit" id="readerQuit"></button>
+  </div>
+</div>
+
+<script src="js/common.js"></script>
+<script src="js/api.js"></script>
+<script src="js/editor.js"></script>
+</body>
+</html>

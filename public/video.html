@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="IronWeb 视频区 —— 收藏与管理你的视频">
+<title>视频区 · IronWeb</title>
+<link rel="icon" href="favicon.svg">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <button class="icon-btn" id="btnBack" title="返回首页"></button>
+  <span class="topbar-title">视频区</span>
+  <span class="count" id="videoCount" style="font-size:12px;color:var(--muted);background:#ffffff0d;border:1px solid var(--border);padding:3px 10px;border-radius:999px">0 个</span>
+  <div class="spacer"></div>
+  <span class="save-status" id="modeText">检测中…</span>
+  <button class="icon-btn" id="btnRefresh" title="刷新"></button>
+</header>
+
+<main class="page">
+  <div class="page-head">
+    <h2>我的视频</h2>
+    <div class="spacer"></div>
+    <div class="search-box">
+      <span class="ic" data-icon="search"></span>
+      <input class="input" id="searchInput" placeholder="搜索视频标题…">
+    </div>
+    <button class="btn" id="btnAddLink"></button>
+    <button class="btn primary" id="btnImport"></button>
+  </div>
+
+  <div class="video-grid" id="videoGrid"></div>
+  <div class="empty" id="emptyBox" style="display:none">
+    <span class="ic" data-icon="film"></span>
+    <h3>还没有视频</h3>
+    <p>点击右上角「导入视频」上传本地视频文件，或「添加链接」收藏在线视频</p>
+  </div>
+</main>
+
+<!-- 导入视频弹窗 -->
+<div class="modal" id="importModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3>导入视频</h3>
+      <button class="icon-btn" data-close="importModal"></button>
+    </div>
+    <label class="label">选择本地视频文件</label>
+    <input class="input" type="file" id="importFile" accept="video/*,.mkv,.avi,.flv,.wmv">
+    <div class="upload-progress" id="uploadProgress"><div></div></div>
+    <p style="font-size:12.5px;color:var(--muted);margin-top:10px" id="importModeNote"></p>
+    <div class="modal-foot">
+      <button class="btn" data-close="importModal">取消</button>
+      <button class="btn primary" id="btnImportGo">开始导入</button>
+    </div>
+  </div>
+</div>
+
+<!-- 添加链接弹窗 -->
+<div class="modal" id="linkModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3>添加视频链接</h3>
+      <button class="icon-btn" data-close="linkModal"></button>
+    </div>
+    <label class="label">标题</label>
+    <input class="input" id="linkTitle" placeholder="视频标题">
+    <label class="label">视频地址（http/https）</label>
+    <input class="input" id="linkUrl" placeholder="https://example.com/video.mp4">
+    <div class="modal-foot">
+      <button class="btn" data-close="linkModal">取消</button>
+      <button class="btn primary" id="btnLinkGo">添加</button>
+    </div>
+  </div>
+</div>
+
+<!-- 播放器 -->
+<div class="player" id="player">
+  <button class="player-close" id="playerClose"></button>
+  <video id="playerVideo" controls autoplay playsinline></video>
+</div>
+
+<script src="js/common.js"></script>
+<script src="js/api.js"></script>
+<script src="js/video.js"></script>
+</body>
+</html>

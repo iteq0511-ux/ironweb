@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="IronWeb 小说区 —— 管理你的小说">
+<title>小说区 · IronWeb</title>
+<link rel="icon" href="favicon.svg">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <button class="icon-btn" id="btnBack" title="返回首页"></button>
+  <span class="topbar-title">小说区</span>
+  <span class="count" id="novelCount" style="font-size:12px;color:var(--muted);background:#ffffff0d;border:1px solid var(--border);padding:3px 10px;border-radius:999px">0 本</span>
+  <div class="spacer"></div>
+  <span class="save-status" id="modeText">检测中…</span>
+  <button class="icon-btn" id="btnRefresh" title="刷新"></button>
+</header>
+
+<main class="page">
+  <div class="page-head">
+    <h2>我的小说</h2>
+    <div class="spacer"></div>
+    <div class="search-box">
+      <span class="ic" data-icon="search"></span>
+      <input class="input" id="searchInput" placeholder="搜索小说标题…">
+    </div>
+    <button class="btn" id="btnTrash"></button>
+    <button class="btn" id="btnExportAll"></button>
+    <button class="btn primary" id="btnImport"></button>
+  </div>
+
+  <div class="grid" id="novelGrid"></div>
+  <div class="empty" id="emptyBox" style="display:none">
+    <span class="ic" data-icon="book"></span>
+    <h3>还没有小说</h3>
+    <p>点击右上角「导入 TXT」导入已有作品，或先导入一本再开始创作</p>
+  </div>
+</main>
+
+<!-- 导入 TXT 弹窗 -->
+<div class="modal" id="importModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3>导入小说 TXT</h3>
+      <button class="icon-btn" data-close="importModal"></button>
+    </div>
+    <label class="label">书名（可选，默认用文件名）</label>
+    <input class="input" id="importTitle" placeholder="书名">
+    <label class="label">选择 TXT 文件</label>
+    <input class="input" type="file" id="importFile" accept=".txt,text/plain">
+    <label class="label">或直接粘贴文本内容</label>
+    <textarea class="textarea" id="importText" placeholder="把小说正文粘贴到这里，自动按「第X章」等标题拆分章节…"></textarea>
+    <div class="modal-foot">
+      <button class="btn" data-close="importModal">取消</button>
+      <button class="btn primary" id="btnImportGo">开始导入</button>
+    </div>
+  </div>
+</div>
+
+<!-- 回收站弹窗 -->
+<div class="modal" id="trashModal">
+  <div class="modal-box" style="max-width:520px">
+    <div class="modal-head">
+      <h3>回收站</h3>
+      <button class="icon-btn" data-close="trashModal"></button>
+    </div>
+    <div id="trashList" style="display:flex;flex-direction:column;gap:8px"></div>
+    <div class="empty" id="trashEmpty" style="display:none;padding:28px 10px">
+      <span class="ic" data-icon="trash"></span>
+      <h3 style="font-size:15px">回收站是空的</h3>
+      <p style="font-size:12.5px">删除的小说会先到这里，可以恢复或彻底删除</p>
+    </div>
+    <div class="modal-foot">
+      <button class="btn danger" id="btnEmptyTrash">清空回收站</button>
+      <button class="btn" data-close="trashModal">关闭</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/common.js"></script>
+<script src="js/api.js"></script>
+<script src="js/novel.js"></script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="IronWeb —— 个人创作博客网站，小说写作与视频收藏">
+<title>IronWeb · 个人创作站</title>
+<link rel="icon" href="favicon.svg">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-logo">IW</div>
+    <span>IronWeb</span>
+  </div>
+  <div class="spacer"></div>
+  <span class="save-status" id="modeText">正在检测运行模式…</span>
+</header>
+
+<main class="home-hero">
+  <h1>欢迎来到 <span class="accent">IronWeb</span></h1>
+  <p>你的个人创作空间 —— 写小说、存视频，数据归你所有，随处可访问</p>
+  <div class="mode-badge" id="modeBadge" style="display:none">
+    <span class="dot"></span><span id="modeBadgeText"></span>
+  </div>
+</main>
+
+<section class="home-grid">
+  <a class="area-card" href="novel.html">
+    <div class="area-icon"><span class="ic"></span></div>
+    <div class="area-title">小说区</div>
+    <div class="area-desc">创建、编辑与阅读你的小说，章节管理、人物关系、沉浸式写作一应俱全。</div>
+    <div class="area-meta" id="novelMeta"><span class="pill">正在统计…</span></div>
+    <div class="area-go">进入小说区 <span class="ic"></span></div>
+  </a>
+  <a class="area-card" href="video.html">
+    <div class="area-icon"><span class="ic"></span></div>
+    <div class="area-title">视频区</div>
+    <div class="area-desc">导入、搜索与播放你收藏的视频，支持本地文件与在线链接。</div>
+    <div class="area-meta" id="videoMeta"><span class="pill">正在统计…</span></div>
+    <div class="area-go">进入视频区 <span class="ic"></span></div>
+  </a>
+</section>
+
+<footer style="text-align:center;color:#55647a;font-size:12.5px;padding:34px 16px 40px">
+  IronWeb · 数据自动保存在你选择的目录 / 浏览器中 · 支持电脑与手机访问
+</footer>
+
+<script src="js/common.js"></script>
+<script src="js/api.js"></script>
+<script src="js/home.js"></script>
+</body>
+</html>

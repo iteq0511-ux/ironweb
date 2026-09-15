@@ -1,0 +1,61 @@
+{
+ "id": "d14a3587-babb-4a07-8769-514df32a23d6",
+ "title": "示例小说《星火》",
+ "createdAt": "2026-09-15T11:05:41.084Z",
+ "updatedAt": "2026-09-15T11:14:16.237Z",
+ "deleted": false,
+ "deletedAt": null,
+ "settings": {
+  "fontSize": 17,
+  "fontColor": "#e8edf3",
+  "lineHeight": 1.9,
+  "fontFamily": "默认",
+  "editorTheme": "dark"
+ },
+ "chapters": [
+  {
+   "id": "demo-c1",
+   "title": "第一章 夜航",
+   "content": "深夜的港口只有一盏孤灯。\n林晚站在船头，望着漆黑的海面出神。\n“在想什么？”陈默从舱门探出头来。\n林晚没有回头，只说了一句：“今晚的风，比昨天大。”"
+  },
+  {
+   "id": "demo-c2",
+   "title": "第二章 地图",
+   "content": "陈默摊开一张泛黄的航海图，指尖沿着虚线缓缓移动。\n“这里，”他说，“标记着我们要去的地方。”\n林晚看着图上那枚褪色的红圈，沉默了很久。\n“那就出发吧。”"
+  }
+ ],
+ "characters": [
+  {
+   "id": "demo-p1",
+   "name": "林晚",
+   "desc": "主角，沉默寡言的船长",
+   "color": "#5b8def"
+  },
+  {
+   "id": "demo-p2",
+   "name": "陈默",
+   "desc": "航海士，性格开朗",
+   "color": "#f5a524"
+  },
+  {
+   "id": "demo-p3",
+   "name": "老周",
+   "desc": "轮机长，经验丰富",
+   "color": "#3fb27f"
+  }
+ ],
+ "relations": [
+  {
+   "id": "demo-r1",
+   "from": "demo-p1",
+   "to": "demo-p2",
+   "type": "朋友"
+  },
+  {
+   "id": "demo-r2",
+   "from": "demo-p1",
+   "to": "demo-p3",
+   "type": "同事"
+  }
+ ]
+}
