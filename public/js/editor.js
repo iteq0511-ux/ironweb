@@ -1,7 +1,7 @@
 /* IronWeb 小说编辑器 */
 'use strict';
 
-const DEFAULT_SETTINGS = { fontSize: 17, fontColor: '#e8edf3', lineHeight: 1.9, fontFamily: '默认', editorTheme: 'dark' };
+const DEFAULT_SETTINGS = { fontSize: 17, fontColor: '#1f2733', lineHeight: 1.9, fontFamily: '默认', editorTheme: 'light' };
 const CHAR_COLORS = ['#f5a524', '#5b8def', '#3fb27f', '#e5534b', '#9b6df2', '#e889a9', '#38b6c2', '#c98a3a'];
 const REL_TYPES = ['朋友', '恋人', '夫妻', '父子', '母子', '兄弟姐妹', '师徒', '仇敌', '同事', '同学', '邻居', '主仆', '上司下属', '其他'];
 
@@ -346,23 +346,23 @@ function drawGraph() {
     const a = (i / Math.max(chars.length, 1)) * Math.PI * 2 - Math.PI / 2;
     pos[c.id] = { x: cx + R * Math.cos(a), y: cy + R * Math.sin(a) };
   });
-  let html = '<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#f5a524"/></marker></defs>';
+  let html = '<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#e8890c"/></marker></defs>';
   // 边
   novel.relations.forEach(r => {
     const p1 = pos[r.from], p2 = pos[r.to];
     if (!p1 || !p2) return;
     const dim = graphSel && graphSel !== r.from && graphSel !== r.to ? ' opacity:.18' : '';
-    html += `<line x1="${p1.x}" y1="${p1.y}" x2="${p2.x}" y2="${p2.y}" stroke="#f5a524" stroke-width="1.6" marker-end="url(#arr)"${dim}/>`;
+    html += `<line x1="${p1.x}" y1="${p1.y}" x2="${p2.x}" y2="${p2.y}" stroke="#e8890c" stroke-width="1.6" marker-end="url(#arr)"${dim}/>`;
     const mx = (p1.x + p2.x) / 2, my = (p1.y + p2.y) / 2;
-    html += `<text x="${mx}" y="${my - 4}" font-size="9" fill="#ffcf7a" text-anchor="middle"${dim}>${esc(r.type)}</text>`;
+    html += `<text x="${mx}" y="${my - 4}" font-size="9" fill="#b26a00" text-anchor="middle"${dim}>${esc(r.type)}</text>`;
   });
   // 节点
   chars.forEach(c => {
     const p = pos[c.id];
     const dim = graphSel && graphSel !== c.id ? ' opacity:.25' : '';
-    const hl = graphSel === c.id ? ' stroke:#fff stroke-width:2.4' : '';
+    const hl = graphSel === c.id ? ' stroke:#e8890c stroke-width:2.4' : '';
     html += `<circle cx="${p.x}" cy="${p.y}" r="17" fill="${esc(c.color)}"${hl}${dim} data-char="${esc(c.id)}" class="g-node" style="cursor:pointer"/>`;
-    html += `<text x="${p.x}" y="${p.y + 31}" font-size="11" fill="#e8edf3" text-anchor="middle"${dim}>${esc(c.name)}</text>`;
+    html += `<text x="${p.x}" y="${p.y + 31}" font-size="11" fill="#1f2733" text-anchor="middle"${dim}>${esc(c.name)}</text>`;
   });
   svg.innerHTML = html;
   svg.querySelectorAll('.g-node').forEach(n => n.addEventListener('click', () => {
@@ -376,22 +376,28 @@ function applySettings() {
   const s = novel.settings;
   const ta = $('#ta');
   const size = s.fontSize || 17;
+  const dark = s.editorTheme === 'dark';
+  const baseColor = s.fontColor || '#1f2733';
   ta.style.fontSize = size + 'px';
   ta.style.lineHeight = s.lineHeight || 1.9;
-  ta.style.color = s.fontColor || '#e8edf3';
+  ta.style.color = dark && baseColor === '#1f2733' ? '#e8edf3' : baseColor;
   const map = { '默认': '', '宋体': 'SimSun, serif', '楷体': 'KaiTi, serif', '黑体': 'SimHei, sans-serif', '微软雅黑': '"Microsoft YaHei", sans-serif' };
   ta.style.fontFamily = map[s.fontFamily] || '';
-  document.body.classList.toggle('light-theme', s.editorTheme === 'light');
+  document.body.classList.toggle('light-theme', !dark);
+  document.body.classList.toggle('dark-theme', dark);
   $('#setFontSize').value = size;
   $('#setFontSizeVal').textContent = size;
   $('#setLineHeight').value = s.lineHeight || 1.9;
   $('#setLineHeightVal').textContent = Number(s.lineHeight || 1.9).toFixed(2);
   $('#setFontFamily').value = s.fontFamily || '默认';
-  $('#setFontColor').value = s.fontColor || '#e8edf3';
+  $('#setFontColor').value = baseColor;
   // 颜色色板
   const sw = $('#colorSwatches');
   sw.innerHTML = '';
-  ['#e8edf3', '#ffffff', '#f5e6c4', '#a9d8b8', '#ff9d9d', '#9db8f5', '#f5a524'].forEach(color => {
+  (dark
+    ? ['#e8edf3', '#ffffff', '#f5e6c4', '#a9d8b8', '#ff9d9d', '#9db8f5', '#f5a524']
+    : ['#1f2733', '#3b4a5c', '#7a4d0f', '#a94f4f', '#2f5f4f', '#3b6fd4', '#e8890c']
+  ).forEach(color => {
     const b = document.createElement('button');
     b.className = 'swatch' + (color.toLowerCase() === (s.fontColor || '').toLowerCase() ? ' active' : '');
     b.style.background = color;

@@ -2,15 +2,15 @@
  "id": "d14a3587-babb-4a07-8769-514df32a23d6",
  "title": "示例小说《星火》",
  "createdAt": "2026-09-15T11:05:41.084Z",
- "updatedAt": "2026-09-15T11:14:16.237Z",
+ "updatedAt": "2026-09-15T12:35:43.662Z",
  "deleted": false,
  "deletedAt": null,
  "settings": {
   "fontSize": 17,
-  "fontColor": "#e8edf3",
+  "fontColor": "#1f2733",
   "lineHeight": 1.9,
   "fontFamily": "默认",
-  "editorTheme": "dark"
+  "editorTheme": "light"
  },
  "chapters": [
   {
