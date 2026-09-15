@@ -76,7 +76,7 @@ IronWeb/
 1. 代码已推送到 GitHub 仓库：`https://github.com/iteq0511-ux/ironweb`（仓库根有 index.html 自动跳转到 public/）。
 2. 仓库页面 → `Settings` → 左侧 `Pages` → Source 选 **Deploy from a branch** → Branch 选 `main` → 文件夹 `/ (root)` → `Save`。
 3. 等约 1 分钟，网站地址：**https://iteq0511-ux.github.io/ironweb/**（已实测可访问）。
-4. 以后更新网站：在 `E:\AiWork\Web\IronWeb` 下修改代码后，运行 `git add -A` → `git commit -m "说明"` → `git push origin main`，约 1 分钟后线上自动更新。
+4. 以后更新网站：**改好文件后，双击项目里的 `更新网站.bat`**（会自动提交并推送到 GitHub），约 1 分钟后线上自动更新。想手动执行也可以：在项目目录运行 `git add -A` → `git commit -m "说明"` → `git push origin main`。
 
 > 提示：静态托管时视频会占用浏览器存储空间，建议视频尽量用"添加链接"方式收藏。
 
