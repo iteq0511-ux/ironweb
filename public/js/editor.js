@@ -1,7 +1,7 @@
 /* IronWeb 小说编辑器 */
 'use strict';
 
-const DEFAULT_SETTINGS = { fontSize: 17, fontColor: '#1f2733', lineHeight: 1.9, fontFamily: '默认', editorTheme: 'light' };
+const DEFAULT_SETTINGS = { fontSize: 17, fontColor: '#000000', lineHeight: 1.9, fontFamily: '默认', editorTheme: 'light' };
 const CHAR_COLORS = ['#f5a524', '#5b8def', '#3fb27f', '#e5534b', '#9b6df2', '#e889a9', '#38b6c2', '#c98a3a'];
 const REL_TYPES = ['朋友', '恋人', '夫妻', '父子', '母子', '兄弟姐妹', '师徒', '仇敌', '同事', '同学', '邻居', '主仆', '上司下属', '其他'];
 

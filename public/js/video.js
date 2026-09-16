@@ -2,6 +2,9 @@
 'use strict';
 
 let videoList = [];
+let currentCat = '全部';
+let editingVideoId = null;
+const CATS = ['全部', '动漫', 'AI', '影视', '音乐', '教程', '其他'];
 const urlCache = {}; // id -> objectURL（local 模式，用于回收）
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -31,6 +34,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   $('#searchInput').addEventListener('input', render);
   $('#btnImportGo').addEventListener('click', doImport);
   $('#btnLinkGo').addEventListener('click', doAddLink);
+  $('#btnEditGo').addEventListener('click', doEditVideo);
   $('#playerClose').addEventListener('click', closePlayer);
   $('#player').addEventListener('click', e => { if (e.target === $('#player')) closePlayer(); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closePlayer(); });
@@ -44,26 +48,50 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 async function load() {
   videoList = await IronAPI.listVideos();
+  renderCats();
   render();
+}
+
+function renderCats() {
+  const bar = $('#catBar');
+  bar.innerHTML = '';
+  CATS.forEach(c => {
+    const b = document.createElement('button');
+    b.className = 'cat-chip' + (c === currentCat ? ' active' : '');
+    b.textContent = c;
+    if (c !== '全部') {
+      const n = videoList.filter(v => (v.category || '其他') === c).length;
+      b.textContent += ' ' + n;
+    }
+    b.addEventListener('click', () => { currentCat = c; renderCats(); render(); });
+    bar.appendChild(b);
+  });
 }
 
 function render() {
   const kw = $('#searchInput').value.trim().toLowerCase();
-  const list = kw ? videoList.filter(v => (v.title + ' ' + (v.fileName || '')).toLowerCase().includes(kw)) : videoList;
+  let list = videoList;
+  if (currentCat !== '全部') list = list.filter(v => (v.category || '其他') === currentCat);
+  if (kw) list = list.filter(v => (v.title + ' ' + (v.fileName || '')).toLowerCase().includes(kw));
   const grid = $('#videoGrid');
   grid.innerHTML = '';
   $('#videoCount').textContent = `${videoList.length} 个`;
+  const totalInCat = currentCat === '全部' ? videoList.length : videoList.filter(v => (v.category || '其他') === currentCat).length;
   $('#emptyBox').style.display = list.length ? 'none' : 'block';
   if (kw && !list.length) {
     $('#emptyBox').style.display = 'block';
     $('#emptyBox').querySelector('h3').textContent = '没有找到匹配的视频';
     $('#emptyBox').querySelector('p').textContent = '换个关键词试试';
+  } else if (!kw && !totalInCat) {
+    $('#emptyBox').querySelector('h3').textContent = currentCat === '全部' ? '还没有视频' : `「${currentCat}」分类还没有视频`;
+    $('#emptyBox').querySelector('p').textContent = '点击右上角「导入视频」上传本地视频文件，或「添加链接」收藏在线视频';
   }
 
   list.forEach(v => {
     const card = document.createElement('div');
     card.className = 'v-card';
     const isLink = !!v.isLink;
+    const cat = esc(v.category || '其他');
     card.innerHTML = `
       <div class="v-thumb" data-play>
         <span class="thumb-fallback ic">${icon('film', 46)}</span>
@@ -72,13 +100,17 @@ function render() {
       </div>
       <div class="card-body">
         <div class="card-title" title="${esc(v.title)}">${esc(v.title)}</div>
-        <span class="src-tag ${isLink ? 'link' : 'local'}">${isLink ? '在线链接' : '本地文件'}</span>
+        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+          <span class="src-tag ${isLink ? 'link' : 'local'}">${isLink ? '在线链接' : '本地文件'}</span>
+          <span class="cat-tag" style="font-size:11px;padding:2px 8px;border-radius:999px;background:var(--accent);color:#fff">${cat}</span>
+        </div>
         <div class="card-meta">
           <span>${isLink ? '—' : fmtSize(v.size)}</span><span>${fmtTime(v.createdAt)}</span>
         </div>
         <div class="card-actions">
           <button class="btn primary sm" data-act="play">播放</button>
           <button class="btn sm" data-act="export">导出</button>
+          <button class="btn sm" data-act="edit">编辑</button>
           <button class="btn danger sm" data-act="del">删除</button>
         </div>
       </div>`;
@@ -92,6 +124,7 @@ function render() {
     thumb.addEventListener('click', () => playVideo(v));
     card.querySelector('[data-act="play"]').addEventListener('click', () => playVideo(v));
     card.querySelector('[data-act="export"]').addEventListener('click', async () => exportVideo(v));
+    card.querySelector('[data-act="edit"]').addEventListener('click', () => openEditModal(v));
     card.querySelector('[data-act="del"]').addEventListener('click', async () => {
       if (!confirm(`删除视频「${v.title}」？`)) return;
       await IronAPI.deleteVideo(v.id);
@@ -164,7 +197,8 @@ async function doImport() {
   const bar = $('#uploadProgress');
   bar.classList.add('show');
   bar.querySelector('div').style.width = '0%';
-  const { promise, abort } = IronAPI.importVideo(file, p => {
+  const cat = $('#importCategory').value || '其他';
+  const { promise, abort } = IronAPI.importVideo(file, cat, p => {
     bar.querySelector('div').style.width = Math.round(p * 100) + '%';
   });
   try {
@@ -188,13 +222,38 @@ async function doAddLink() {
   const title = $('#linkTitle').value.trim();
   if (!url) { toast('请输入视频地址', 'warn'); return; }
   if (!/^https?:\/\//i.test(url)) { toast('请输入 http(s) 开头的有效链接', 'warn'); return; }
+  const cat = $('#linkCategory').value || '其他';
   try {
-    await IronAPI.addVideoLink(title || url.split('/').pop() || '视频链接', url);
+    await IronAPI.addVideoLink(title || url.split('/').pop() || '视频链接', url, cat);
     toast('链接已添加', 'ok');
     closeModal('linkModal');
     $('#linkUrl').value = ''; $('#linkTitle').value = '';
     load();
   } catch (e) {
     toast(e.message || '添加失败', 'err');
+  }
+}
+
+/* ---------- 编辑视频 ---------- */
+function openEditModal(v) {
+  editingVideoId = v.id;
+  $('#editTitle').value = v.title || '';
+  $('#editCategory').value = (v.category && CATS.includes(v.category)) ? v.category : '其他';
+  openModal('editModal');
+}
+
+async function doEditVideo() {
+  if (!editingVideoId) return;
+  const title = $('#editTitle').value.trim();
+  const category = $('#editCategory').value || '其他';
+  if (!title) { toast('请输入标题', 'warn'); return; }
+  try {
+    await IronAPI.updateVideo(editingVideoId, { title, category });
+    toast('已保存', 'ok');
+    closeModal('editModal');
+    editingVideoId = null;
+    load();
+  } catch (e) {
+    toast(e.message || '保存失败', 'err');
   }
 }

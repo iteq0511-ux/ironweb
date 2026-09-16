@@ -103,11 +103,11 @@ function normalizeNovel(body, existing) {
   const title = typeof body.title === 'string' ? body.title.trim().slice(0, 200) : (base.title || '未命名');
   const settings = (body.settings && typeof body.settings === 'object') ? {
     fontSize: Number(body.settings.fontSize) || 17,
-    fontColor: typeof body.settings.fontColor === 'string' ? body.settings.fontColor.slice(0, 30) : '#e8edf3',
+    fontColor: typeof body.settings.fontColor === 'string' ? body.settings.fontColor.slice(0, 30) : '#000000',
     lineHeight: Number(body.settings.lineHeight) || 1.9,
     fontFamily: typeof body.settings.fontFamily === 'string' ? body.settings.fontFamily.slice(0, 50) : '默认',
-    editorTheme: body.settings.editorTheme === 'light' ? 'light' : 'dark'
-  } : (base.settings || { fontSize: 17, fontColor: '#e8edf3', lineHeight: 1.9, fontFamily: '默认', editorTheme: 'dark' });
+    editorTheme: body.settings.editorTheme === 'dark' ? 'dark' : 'light'
+  } : (base.settings || { fontSize: 17, fontColor: '#000000', lineHeight: 1.9, fontFamily: '默认', editorTheme: 'light' });
 
   const cleanArr = (v, max) => Array.isArray(v) ? v.slice(0, max || 2000) : [];
 
@@ -317,9 +317,10 @@ const server = http.createServer(async (req, res) => {
     }
 
     if (p === '/api/videos/import' && method === 'POST') {
-      // 原始二进制上传：POST /api/videos/import?name=xxx.mp4
+      // 原始二进制上传：POST /api/videos/import?name=xxx.mp4&category=动漫
       const originalName = safeFileId(q.get('name') || 'video.mp4');
       const contentType = req.headers['content-type'] || 'video/mp4';
+      const category = String(q.get('category') || '').trim().slice(0, 20) || '其他';
       const id = uuid();
       const ext = extFor(contentType, originalName);
       const storedName = id + ext;
@@ -334,7 +335,7 @@ const server = http.createServer(async (req, res) => {
         req.pipe(ws);
       });
       const title = originalName.replace(/\.[a-z0-9]+$/i, '');
-      const meta = { id, title, fileName: originalName, storedName, size, type: contentType.split(';')[0].trim(), createdAt: now(), isLink: false };
+      const meta = { id, title, fileName: originalName, storedName, size, type: contentType.split(';')[0].trim(), category, createdAt: now(), isLink: false };
       const list = loadVideoMeta();
       list.push(meta);
       saveVideoMeta(list);
@@ -345,9 +346,10 @@ const server = http.createServer(async (req, res) => {
       const body = await readJsonBody(req, 2);
       const url = String(body.url || '').trim();
       const title = String(body.title || '').trim().slice(0, 200) || '视频链接';
+      const category = String(body.category || '').trim().slice(0, 20) || '其他';
       if (!/^https?:\/\//i.test(url)) return sendJson(res, 400, { ok: false, error: '请输入有效的 http(s) 链接' });
       const id = uuid();
-      const meta = { id, title, url, fileName: '', size: 0, type: 'link', createdAt: now(), isLink: true };
+      const meta = { id, title, url, fileName: '', size: 0, type: 'link', category, createdAt: now(), isLink: true };
       const list = loadVideoMeta();
       list.push(meta);
       saveVideoMeta(list);
@@ -375,6 +377,14 @@ const server = http.createServer(async (req, res) => {
           'Cache-Control': 'no-store', ...SECURITY_HEADERS
         });
         return fs.createReadStream(file).pipe(res);
+      }
+      if (action === '' && method === 'PUT') { // 更新元信息（标题 / 分类）
+        const body = await readJsonBody(req, 2);
+        const next = { ...meta };
+        if (typeof body.title === 'string' && body.title.trim()) next.title = body.title.trim().slice(0, 200);
+        if (typeof body.category === 'string' && body.category.trim()) next.category = body.category.trim().slice(0, 20);
+        saveVideoMeta(list.map(v => v.id === id ? next : v));
+        return sendJson(res, 200, { ok: true, video: next });
       }
       if (action === '' && method === 'DELETE') {
         if (!meta.isLink) {

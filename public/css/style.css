@@ -3,23 +3,23 @@
  * 阅读模式（.reader）与播放器为黑底，其余全程亮色
  * ============================================================ */
 :root {
-  --bg: #f4f6f9;
-  --bg2: #eceff3;
-  --panel: #ffffff;
-  --panel2: #f7f9fb;
-  --border: #dde2e9;
-  --border2: #dde2e980;
-  --text: #1f2733;
-  --muted: #5c6b7a;
-  --accent: #e8890c;
-  --accent-soft: #e8890c1a;
-  --accent2: #b26a00;
+  --bg: #fff0f5;
+  --bg2: #ffe4ec;
+  --panel: #fffafc;
+  --panel2: #fff0f5;
+  --border: #f2c6d5;
+  --border2: #f2c6d580;
+  --text: #000000;
+  --muted: #6b4453;
+  --accent: #ff4d8f;
+  --accent-soft: #ff4d8f1a;
+  --accent2: #d6336c;
   --danger: #d6453d;
   --danger-soft: #d6453d1a;
   --ok: #1f9d62;
   --radius: 14px;
   --radius-s: 9px;
-  --shadow: 0 10px 30px #1f27331a;
+  --shadow: 0 10px 30px #ff4d8f26;
   --topbar-h: 58px;
   --bottombar-h: 62px;
   --panel-w: 306px;
@@ -42,7 +42,7 @@ a { color: var(--accent2); text-decoration: none; }
 button { font-family: inherit; cursor: pointer; }
 input, textarea, select { font-family: inherit; color: var(--text); }
 ::-webkit-scrollbar { width: 9px; height: 9px; }
-::-webkit-scrollbar-thumb { background: #c3ccd6; border-radius: 8px; }
+::-webkit-scrollbar-thumb { background: #f0b9cc; border-radius: 8px; }
 ::-webkit-scrollbar-track { background: transparent; }
 
 /* ---------- 通用组件 ---------- */
@@ -56,7 +56,7 @@ input, textarea, select { font-family: inherit; color: var(--text); }
   color: var(--text); font-size: 14px; transition: all .15s;
   user-select: none; white-space: nowrap;
 }
-.btn:hover { border-color: #c6cfda; background: #e9edf2; transform: translateY(-1px); }
+.btn:hover { border-color: #f2c6d5; background: #ffe4ec; transform: translateY(-1px); }
 .btn:active { transform: translateY(0); }
 .btn.primary { background: linear-gradient(135deg, #f5a524, #e8890c); border-color: transparent; color: #2b1a02; font-weight: 600; }
 .btn.primary:hover { filter: brightness(1.08); }
@@ -157,7 +157,7 @@ input, textarea, select { font-family: inherit; color: var(--text); }
   background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius);
   overflow: hidden; transition: all .18s; display: flex; flex-direction: column;
 }
-.card:hover { border-color: #c6cfda; transform: translateY(-3px); box-shadow: var(--shadow); }
+.card:hover { border-color: #f2c6d5; transform: translateY(-3px); box-shadow: var(--shadow); }
 .card-cover {
   height: 96px; display: flex; align-items: flex-end; padding: 14px 16px;
   background: linear-gradient(135deg, #f7e9d3, #eceff3);
@@ -177,7 +177,7 @@ input, textarea, select { font-family: inherit; color: var(--text); }
 .empty {
   text-align: center; padding: 70px 20px; color: var(--muted);
 }
-.empty .ic { width: 54px; height: 54px; color: #c3ccd6; margin-bottom: 14px; }
+.empty .ic { width: 54px; height: 54px; color: #f0b9cc; margin-bottom: 14px; }
 .empty h3 { color: var(--text); font-size: 17px; margin-bottom: 6px; }
 .empty p { font-size: 13.5px; }
 
@@ -287,7 +287,7 @@ input, textarea, select { font-family: inherit; color: var(--text); }
 .ch-op .ic { width: 13px; height: 13px; }
 .add-chapter {
   margin-top: 8px; width: 100%; padding: 10px; border-radius: 10px;
-  border: 1px dashed #c6cfda; background: transparent; color: var(--muted); font-size: 13.5px;
+  border: 1px dashed #f2c6d5; background: transparent; color: var(--muted); font-size: 13.5px;
   display: flex; align-items: center; justify-content: center; gap: 7px; transition: all .15s;
 }
 .add-chapter:hover { border-color: var(--accent); color: var(--accent2); background: var(--accent-soft); }
@@ -367,11 +367,11 @@ input, textarea, select { font-family: inherit; color: var(--text); }
 /* 编辑器主题 */
 .editor.light-theme { background: #f4f1ea; }
 .editor.light-theme .write-area { background: #fbfaf6; }
-.editor.light-theme .editor-ta { color: #333; }
-.editor.light-theme .editor-topbar { background: #efece4; border-color: #ddd6c6; }
-.editor.light-theme .side-panel { background: #efece4; border-color: #ddd6c6; }
-.editor.light-theme .editor-title-input { color: #222; }
-.editor.light-theme .chapter-title-input { color: #222; }
+.editor.light-theme .editor-ta { color: #000; }
+.editor.light-theme .editor-topbar { background: #fff0f5; border-color: #f2c6d5; }
+.editor.light-theme .side-panel { background: #fff0f5; border-color: #f2c6d5; }
+.editor.light-theme .editor-title-input { color: #000; }
+.editor.light-theme .chapter-title-input { color: #000; }
 .editor.light-theme .tabs { border-color: #ddd6c6; }
 .editor.light-theme .set-note { background: #00000008; border-color: #ddd6c6; }
 .editor.light-theme .write-chapter-words { color: #8a8372; }
@@ -430,7 +430,7 @@ body.panel-open { overflow: hidden; }
  * ============================================================ */
 .video-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 16px; }
 .v-card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; transition: all .18s; display: flex; flex-direction: column; }
-.v-card:hover { border-color: #c6cfda; transform: translateY(-3px); box-shadow: var(--shadow); }
+.v-card:hover { border-color: #f2c6d5; transform: translateY(-3px); box-shadow: var(--shadow); }
 .v-thumb { position: relative; aspect-ratio: 16 / 9; background: #0a0d11; display: grid; place-items: center; overflow: hidden; cursor: pointer; }
 .v-thumb video { width: 100%; height: 100%; object-fit: cover; }
 .v-thumb .thumb-fallback { color: #33404f; }
@@ -513,3 +513,8 @@ body.panel-open { overflow: hidden; }
 .editor.dark-theme .tabs { border-color: #263040; }
 .editor.dark-theme .set-note { background: #ffffff08; border-color: #263040; }
 .editor.dark-theme .write-chapter-words { color: #8fa1b5; }
+/* 视频分类栏 */
+.cat-bar{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 4px}
+.cat-chip{border:1px solid var(--border);background:var(--bg2);color:var(--text);padding:6px 14px;border-radius:999px;font-size:13px;cursor:pointer;transition:all .15s}
+.cat-chip:hover{border-color:var(--accent)}
+.cat-chip.active{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}

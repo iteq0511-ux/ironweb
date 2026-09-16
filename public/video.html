@@ -31,6 +31,8 @@
     <button class="btn primary" id="btnImport"></button>
   </div>
 
+  <div class="cat-bar" id="catBar"></div>
+
   <div class="video-grid" id="videoGrid"></div>
   <div class="empty" id="emptyBox" style="display:none">
     <span class="ic" data-icon="film"></span>
@@ -48,6 +50,15 @@
     </div>
     <label class="label">选择本地视频文件</label>
     <input class="input" type="file" id="importFile" accept="video/*,.mkv,.avi,.flv,.wmv">
+    <label class="label">分类</label>
+    <select class="select" id="importCategory">
+      <option value="动漫">动漫</option>
+      <option value="AI">AI</option>
+      <option value="影视">影视</option>
+      <option value="音乐">音乐</option>
+      <option value="教程">教程</option>
+      <option value="其他">其他</option>
+    </select>
     <div class="upload-progress" id="uploadProgress"><div></div></div>
     <p style="font-size:12.5px;color:var(--muted);margin-top:10px" id="importModeNote"></p>
     <div class="modal-foot">
@@ -68,9 +79,43 @@
     <input class="input" id="linkTitle" placeholder="视频标题">
     <label class="label">视频地址（http/https）</label>
     <input class="input" id="linkUrl" placeholder="https://example.com/video.mp4">
+    <label class="label">分类</label>
+    <select class="select" id="linkCategory">
+      <option value="动漫">动漫</option>
+      <option value="AI">AI</option>
+      <option value="影视">影视</option>
+      <option value="音乐">音乐</option>
+      <option value="教程">教程</option>
+      <option value="其他">其他</option>
+    </select>
     <div class="modal-foot">
       <button class="btn" data-close="linkModal">取消</button>
       <button class="btn primary" id="btnLinkGo">添加</button>
+    </div>
+  </div>
+</div>
+
+<!-- 编辑视频弹窗 -->
+<div class="modal" id="editModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3>编辑视频信息</h3>
+      <button class="icon-btn" data-close="editModal"></button>
+    </div>
+    <label class="label">标题</label>
+    <input class="input" id="editTitle" maxlength="200" placeholder="视频标题">
+    <label class="label">分类</label>
+    <select class="select" id="editCategory">
+      <option value="动漫">动漫</option>
+      <option value="AI">AI</option>
+      <option value="影视">影视</option>
+      <option value="音乐">音乐</option>
+      <option value="教程">教程</option>
+      <option value="其他">其他</option>
+    </select>
+    <div class="modal-foot">
+      <button class="btn" data-close="editModal">取消</button>
+      <button class="btn primary" id="btnEditGo">保存</button>
     </div>
   </div>
 </div>

@@ -120,7 +120,7 @@ const IronAPI = (() => {
     const n = {
       id: uid(), title: title || '未命名', createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(), deleted: false, deletedAt: null,
-      settings: { fontSize: 17, fontColor: '#e8edf3', lineHeight: 1.9, fontFamily: '默认', editorTheme: 'dark' },
+      settings: { fontSize: 17, fontColor: '#000000', lineHeight: 1.9, fontFamily: '默认', editorTheme: 'light' },
       chapters: chapters || [], characters: [], relations: []
     };
     if (mode === 'server') {
@@ -163,10 +163,11 @@ const IronAPI = (() => {
     return list;
   }
 
-  async function addVideoLink(title, url) {
-    const meta = { id: uid(), title, url, fileName: '', size: 0, type: 'link', createdAt: new Date().toISOString(), isLink: true };
+  async function addVideoLink(title, url, category) {
+    const cat = category || '其他';
+    const meta = { id: uid(), title, url, fileName: '', size: 0, type: 'link', category: cat, createdAt: new Date().toISOString(), isLink: true };
     if (mode === 'server') {
-      const d = await jsonReq('api/videos/link', 'POST', { title, url });
+      const d = await jsonReq('api/videos/link', 'POST', { title, url, category: cat });
       return d.video;
     }
     await idbPut('videos', meta);
@@ -177,10 +178,11 @@ const IronAPI = (() => {
    *  server 模式 -> 原始二进制上传到服务器
    *  local  模式 -> Blob 存入浏览器 IndexedDB
    *  返回 { video, promise, abort }  */
-  function importVideo(file, onProgress) {
+  function importVideo(file, category, onProgress) {
+    const cat = category || '其他';
     if (mode === 'server') {
       const xhr = new XMLHttpRequest();
-      xhr.open('POST', 'api/videos/import?name=' + encodeURIComponent(file.name));
+      xhr.open('POST', 'api/videos/import?name=' + encodeURIComponent(file.name) + '&category=' + encodeURIComponent(cat));
       xhr.setRequestHeader('Content-Type', file.type || 'application/octet-stream');
       xhr.upload.onprogress = e => { if (onProgress && e.lengthComputable) onProgress(e.loaded / e.total); };
       const p = new Promise((res, rej) => {
@@ -194,7 +196,7 @@ const IronAPI = (() => {
     }
     const meta = {
       id: uid(), title: file.name.replace(/\.[^.]+$/, '') || '视频', fileName: file.name,
-      size: file.size, type: file.type || 'video/mp4', createdAt: new Date().toISOString(), isLink: false
+      size: file.size, type: file.type || 'video/mp4', category: cat, createdAt: new Date().toISOString(), isLink: false
     };
     const p = (async () => {
       await idbPut('blobs', { id: meta.id, blob: file });
@@ -202,6 +204,19 @@ const IronAPI = (() => {
       return meta;
     })();
     return { promise: p, abort: () => { /* IDB 无法中止 */ } };
+  }
+
+  async function updateVideo(id, patch) {
+    if (mode === 'server') {
+      const d = await jsonReq('api/videos/' + encodeURIComponent(id), 'PUT', patch);
+      return d.video;
+    }
+    const v = await idbGet('videos', id);
+    if (!v) throw new Error('视频不存在');
+    if (patch.title) v.title = String(patch.title).slice(0, 200);
+    if (patch.category) v.category = String(patch.category).slice(0, 20);
+    await idbPut('videos', v);
+    return v;
   }
 
   async function deleteVideo(id) {
@@ -296,7 +311,7 @@ const IronAPI = (() => {
   return {
     detect, getMode,
     listNovels, getNovel, saveNovel, createNovel, softDelete, restoreNovel, permanentDelete,
-    listVideos, addVideoLink, importVideo, deleteVideo, videoFileUrl, videoDownloadUrl,
+    listVideos, addVideoLink, importVideo, updateVideo, deleteVideo, videoFileUrl, videoDownloadUrl,
     novelToTxt, exportNovelTxt, exportAllTxt, parseTxtToChapters, importNovelTxt,
     stats
   };

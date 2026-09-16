@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // 图标
   $('#btnBack').innerHTML = icon('back', 20);
   $('#btnRefresh').innerHTML = icon('refresh', 18);
+  $('#btnNew').innerHTML = icon('plus', 17) + '新建小说';
   $('#btnTrash').innerHTML = icon('trash', 17) + '回收站';
   $('#btnExportAll').innerHTML = icon('download', 17) + '导出全部 TXT';
   $('#btnImport').innerHTML = icon('upload', 17) + '导入 TXT';
@@ -29,6 +30,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   $('#btnBack').addEventListener('click', () => location.href = 'index.html');
   $('#btnRefresh').addEventListener('click', load);
   $('#btnImport').addEventListener('click', () => openModal('importModal'));
+  $('#btnNew').addEventListener('click', createNewNovel);
   $('#btnTrash').addEventListener('click', openTrash);
   $('#btnExportAll').addEventListener('click', async () => {
     const n = await IronAPI.exportAllTxt();
@@ -53,6 +55,24 @@ async function load() {
   novelList = await IronAPI.listNovels('active');
   render();
   updateTrashCount();
+}
+
+/* ---------- 新建小说 ---------- */
+async function createNewNovel() {
+  const title = prompt('给新小说起个名字（可留空，之后在编辑器里改）：', '');
+  if (title === null) return;
+  const name = (title || '').trim() || '未命名小说';
+  const btn = $('#btnNew');
+  btn.disabled = true;
+  try {
+    const r = await IronAPI.createNovel(name);
+    toast('已创建《' + r.summary.title + '》，进入编辑器', 'ok');
+    location.href = 'editor.html?id=' + encodeURIComponent(r.id);
+  } catch (e) {
+    toast(e.message || '创建失败', 'err');
+  } finally {
+    btn.disabled = false;
+  }
 }
 
 function updateTrashCount() {
